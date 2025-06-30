@@ -7,20 +7,20 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ onSubmit }: SearchBarProps) => {
-  const [query, setQuery] = useState("");
+  const [value, setValue] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
+    setValue(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim() === "") {
+    if (value.trim() === "") {
       toast.error("Please enter your search query.");
       return;
     }
-    onSubmit(query);
-    setQuery("");
+    onSubmit(value);
+    setValue("");
   };
 
   return (
@@ -39,10 +39,11 @@ const SearchBar = ({ onSubmit }: SearchBarProps) => {
             className={styles.input}
             type="text"
             name="query"
+            value={value}
+            onChange={handleChange}
             autoComplete="off"
             placeholder="Search movies..."
             autoFocus
-            onChange={handleChange}
           />
           <button className={styles.button} type="submit">
             Search
