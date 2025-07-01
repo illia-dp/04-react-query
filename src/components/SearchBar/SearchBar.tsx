@@ -1,26 +1,28 @@
-import { useState } from "react";
 import styles from "./SearchBar.module.css";
 import toast from "react-hot-toast";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 
 interface SearchBarProps {
   onSubmit: (query: string) => void;
 }
 
 const SearchBar = ({ onSubmit }: SearchBarProps) => {
-  const [value, setValue] = useState("");
+  interface SearchBarValues {
+    query: string;
+  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
+  const initialValues: SearchBarValues = { query: "" };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (value.trim() === "") {
+  const handleSubmit = (
+    values: SearchBarValues,
+    actions: FormikHelpers<SearchBarValues>
+  ) => {
+    if (values.query.trim() === "") {
       toast.error("Please enter your search query.");
       return;
     }
-    onSubmit(value);
-    setValue("");
+    onSubmit(values.query);
+    actions.resetForm();
   };
 
   return (
@@ -34,21 +36,21 @@ const SearchBar = ({ onSubmit }: SearchBarProps) => {
         >
           Powered by TMDB
         </a>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <input
-            className={styles.input}
-            type="text"
-            name="query"
-            value={value}
-            onChange={handleChange}
-            autoComplete="off"
-            placeholder="Search movies..."
-            autoFocus
-          />
-          <button className={styles.button} type="submit">
-            Search
-          </button>
-        </form>
+        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+          <Form className={styles.form}>
+            <Field
+              className={styles.input}
+              type="text"
+              name="query"
+              autoComplete="off"
+              placeholder="Search movies..."
+              autoFocus
+            />
+            <button className={styles.button} type="submit">
+              Search
+            </button>
+          </Form>
+        </Formik>
       </div>
     </header>
   );
